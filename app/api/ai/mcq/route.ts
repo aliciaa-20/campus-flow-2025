@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const completion = await groq.chat.completions.create({
-      model: 'llama3-70b-8192',
+      model: 'llama-3.3-70b-versatile',
       messages: [{
         role: 'user',
         content: `You are a study assistant. Given these lecture notes, return ONLY a JSON array of 5 multiple choice questions. No preamble, no markdown fences, just raw JSON.
