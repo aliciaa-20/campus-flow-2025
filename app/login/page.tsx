@@ -3,18 +3,17 @@ import { useEffect, useState } from 'react'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router   = useRouter()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
+        // Set cookie then do a full-page navigation so cookie is in the request
         document.cookie = `cf_session=1; path=/; max-age=86400; SameSite=Lax`
-        router.push('/dashboard')
+        window.location.href = '/dashboard'
       }
       if (event === 'SIGNED_OUT') {
         document.cookie = 'cf_session=; max-age=0; path=/'
@@ -26,7 +25,8 @@ export default function LoginPage() {
 
   const handleAdminBypass = () => {
     document.cookie = 'demo_bypass=true; path=/; max-age=86400; SameSite=Lax'
-    router.push('/dashboard')
+    // Full-page navigation so cookie is sent with the request
+    window.location.href = '/dashboard'
   }
 
   if (!mounted) return null
