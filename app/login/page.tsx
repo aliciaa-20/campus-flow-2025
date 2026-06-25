@@ -111,7 +111,7 @@ export default function LoginPage() {
             }}
             providers={[]}
             view="sign_in"
-            showLinks={true}
+            showLinks={false}
           />
 
           {/* Divider */}
@@ -165,11 +165,28 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 16 }}>
-          No account?{' '}
-          <Link href="/register" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>Sign up free</Link>
-        </p>
-        <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-3)', marginTop: 10 }}>
+        {/* Sign up row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 16 }}>
+          <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>New to CampusFlow?</span>
+          <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+        </div>
+        <Link href="/register" style={{ textDecoration: 'none', display: 'block', marginTop: 10 }}>
+          <button style={{
+            width: '100%', padding: '10px 0', borderRadius: 10, cursor: 'pointer',
+            border: '1.5px solid rgba(124,92,255,0.4)',
+            background: 'rgba(124,92,255,0.08)',
+            color: '#7C5CFF', fontSize: 13.5, fontWeight: 600,
+            fontFamily: "'Inter', sans-serif",
+            transition: 'all 0.15s',
+          }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(124,92,255,0.16)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(124,92,255,0.7)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(124,92,255,0.08)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(124,92,255,0.4)' }}
+          >
+            Create Account →
+          </button>
+        </Link>
+        <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.2)', marginTop: 14 }}>
           CampusFlow · Built for students, by students
         </p>
       </div>
