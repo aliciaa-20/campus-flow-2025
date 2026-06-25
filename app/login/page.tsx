@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [mounted, setMounted] = useState(false)
@@ -21,7 +22,7 @@ export default function LoginPage() {
       }
     })
     return () => subscription.unsubscribe()
-  }, [router])
+  }, [])
 
   const handleAdminBypass = () => {
     document.cookie = 'demo_bypass=true; path=/; max-age=86400; SameSite=Lax'
@@ -164,7 +165,11 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-3)', marginTop: 20 }}>
+        <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 16 }}>
+          No account?{' '}
+          <Link href="/register" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>Sign up free</Link>
+        </p>
+        <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-3)', marginTop: 10 }}>
           CampusFlow · Built for students, by students
         </p>
       </div>
