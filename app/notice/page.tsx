@@ -2,18 +2,12 @@
 'use client'
 import { useState } from 'react'
 import Navbar from '@/components/Navbar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
 
 export default function NoticePage() {
   const [noticeText, setNoticeText] = useState('')
   const [eventTitle, setEventTitle] = useState('')
   const [eventDate, setEventDate] = useState('')
-  const [phones, setPhones] = useState('') // comma separated
+  const [phones, setPhones] = useState('')
   const [summary, setSummary] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
@@ -44,73 +38,101 @@ export default function NoticePage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-2xl">
+        {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold">📣 Notice Summarizer</h1>
-          <p className="text-muted-foreground mt-1">Paste a college notice → AI creates a 3-bullet summary and broadcasts it on WhatsApp.</p>
+          <h1 className="text-3xl font-bold tracking-tight">📣 Notice Summarizer</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Paste a college notice → AI creates a 3-bullet summary → broadcasts on WhatsApp.
+          </p>
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <Label>Notice Text</Label>
-                <Textarea
-                  placeholder="Paste the full notice text here..."
-                  className="min-h-[140px] resize-none"
-                  value={noticeText}
-                  onChange={e => setNoticeText(e.target.value)}
-                  required
-                />
+        <div className="rounded-xl border border-border bg-card p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* Notice Text */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Notice Text</label>
+              <textarea
+                placeholder="Paste the full notice text here..."
+                className="w-full min-h-[140px] resize-none bg-background border border-input rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                value={noticeText}
+                onChange={e => setNoticeText(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Event Title */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Event / Notice Title</label>
+              <input
+                type="text"
+                placeholder="e.g. Mid-Semester Exam Schedule"
+                className="bg-background border border-input rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                value={eventTitle}
+                onChange={e => setEventTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Event Date */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Event Date & Time</label>
+              <input
+                type="datetime-local"
+                className="bg-background border border-input rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                value={eventDate}
+                onChange={e => setEventDate(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Phone Numbers */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">WhatsApp Numbers</label>
+              <input
+                type="text"
+                placeholder="9876543210, 9123456789"
+                className="bg-background border border-input rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                value={phones}
+                onChange={e => setPhones(e.target.value)}
+                required
+              />
+              <p className="text-xs text-muted-foreground">India numbers only, without +91. Comma-separated.</p>
+            </div>
+
+            {error && (
+              <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 px-4 py-2.5 rounded-lg">
+                {error}
               </div>
+            )}
 
-              <div className="flex flex-col gap-1.5">
-                <Label>Event / Notice Title</Label>
-                <Input placeholder="e.g. Mid-Semester Exam Schedule"
-                  value={eventTitle}
-                  onChange={e => setEventTitle(e.target.value)}
-                  required />
-              </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-glow text-white font-medium py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              {loading ? (
+                <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Summarising & Broadcasting...</>
+              ) : '📲 Summarise & Broadcast'}
+            </button>
+          </form>
+        </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label>Event Date</Label>
-                <Input type="datetime-local"
-                  value={eventDate}
-                  onChange={e => setEventDate(e.target.value)}
-                  required />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <Label>WhatsApp Numbers (comma separated)</Label>
-                <Input placeholder="9876543210, 9123456789"
-                  value={phones}
-                  onChange={e => setPhones(e.target.value)}
-                  required />
-                <p className="text-xs text-muted-foreground">India numbers, without +91</p>
-              </div>
-
-              {error && <p className="text-sm text-destructive">{error}</p>}
-
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Summarising & Broadcasting...' : '📲 Summarise & Broadcast'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Summary result */}
+        {/* Result */}
         {sent && summary && (
-          <Card className="mt-6 border-green-500">
-            <CardHeader className="flex flex-row items-center gap-2">
-              <CardTitle className="text-base">AI Summary</CardTitle>
-              <Badge className="bg-green-500 text-white">Broadcast sent ✓</Badge>
-            </CardHeader>
-            <CardContent>
+          <div className="mt-5 rounded-xl border border-emerald-500/30 bg-emerald-500/8 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-emerald-500/20 bg-emerald-500/10">
+              <span className="text-sm font-semibold text-emerald-600">✅ AI Summary</span>
+              <span className="text-xs font-medium bg-emerald-500 text-white px-2.5 py-1 rounded-full">
+                Broadcast sent ✓
+              </span>
+            </div>
+            <div className="px-5 py-4">
               <p className="text-sm whitespace-pre-line leading-relaxed">{summary}</p>
-              <p className="text-xs text-muted-foreground mt-3">
-                📅 Calendar event created · 📲 WhatsApp sent to {phones.split(',').length} number(s)
+              <p className="text-xs text-muted-foreground mt-4">
+                📅 Calendar event created · 📲 WhatsApp sent to {phones.split(',').filter(Boolean).length} number{phones.split(',').filter(Boolean).length !== 1 ? 's' : ''}
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
       </main>
     </div>

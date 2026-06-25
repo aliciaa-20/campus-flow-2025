@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     // Step 1: Groq summarize
     const completion = await groq.chat.completions.create({
-      model: 'llama-3-70b-versatile',
+      model: 'llama-3.3-70b-versatile',
       messages: [{
         role: 'user',
         content: `Summarize this college notice in exactly 3 bullet points. Be concise and clear. Use • for bullets.\n\nNotice:\n${noticeText}`,

@@ -4,22 +4,20 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Navbar from '@/components/Navbar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import Link from 'next/link'
 
 export default function NewTask() {
   const router = useRouter()
-  const [form, setForm] = useState({
-    title: '', subject: '', deadline: '', phone: ''
-  })
-  const [studentId, setStudentId] = useState('')
-  const [studentName, setStudentName] = useState('')
+  const [form, setForm] = useState({ title: '', subject: '', deadline: '', phone: '' })
+  const [studentId, setStudentId] = useState('demo-student-id')
+  const [studentName, setStudentName] = useState('Aarush')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
+    const isDemo = document.cookie.includes('demo_bypass=true')
+    if (isDemo) return // use demo defaults above
+
     const loadStudent = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
@@ -46,16 +44,10 @@ export default function NewTask() {
       const res = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          studentId,
-          studentName,
-        }),
+        body: JSON.stringify({ ...form, studentId, studentName }),
       })
-
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to create task')
-
       router.push('/dashboard')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -64,57 +56,64 @@ export default function NewTask() {
     }
   }
 
+  const fields = [
+    { key: 'title', label: 'Task Title', placeholder: 'e.g. ER Diagram Assignment', type: 'text' },
+    { key: 'subject', label: 'Subject', placeholder: 'e.g. DBMS', type: 'text' },
+    { key: 'deadline', label: 'Deadline', placeholder: '', type: 'datetime-local' },
+    { key: 'phone', label: 'WhatsApp Number (for reminder)', placeholder: '9876543210', type: 'text' },
+  ]
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-lg">
-        <Card>
-          <CardHeader>
-            <CardTitle>➕ New Deadline</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="title">Task Title</Label>
-                <Input id="title" placeholder="e.g. ER Diagram Assignment"
-                  value={form.title}
-                  onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                  required />
+        {/* Back link */}
+        <Link href="/dashboard" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-5 transition-colors">
+          ← Back to Dashboard
+        </Link>
+
+        <div className="rounded-xl border border-border bg-card p-6">
+          <div className="mb-5">
+            <h1 className="text-2xl font-bold tracking-tight">➕ New Deadline</h1>
+            <p className="text-xs text-muted-foreground mt-1">Fill in the details — you'll get a WhatsApp reminder 24 hours before.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {fields.map(f => (
+              <div key={f.key} className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium">{f.label}</label>
+                <input
+                  id={f.key}
+                  type={f.type}
+                  placeholder={f.placeholder}
+                  value={form[f.key as keyof typeof form]}
+                  onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))}
+                  required
+                  className="bg-background border border-input rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                />
+                {f.key === 'phone' && (
+                  <p className="text-xs text-muted-foreground">India numbers only. Don't include +91.</p>
+                )}
               </div>
+            ))}
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="subject">Subject</Label>
-                <Input id="subject" placeholder="e.g. DBMS"
-                  value={form.subject}
-                  onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
-                  required />
+            {error && (
+              <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 px-4 py-2.5 rounded-lg">
+                {error}
               </div>
+            )}
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="deadline">Deadline</Label>
-                <Input id="deadline" type="datetime-local"
-                  value={form.deadline}
-                  onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))}
-                  required />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="phone">WhatsApp Number (for reminder)</Label>
-                <Input id="phone" placeholder="9876543210"
-                  value={form.phone}
-                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                  required />
-                <p className="text-xs text-muted-foreground">India numbers only. Don't include +91.</p>
-              </div>
-
-              {error && <p className="text-sm text-destructive">{error}</p>}
-
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Saving & notifying n8n...' : 'Save & Set Reminder 🔔'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-glow text-white font-medium py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              {loading ? (
+                <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving...</>
+              ) : '🔔 Save & Set Reminder'}
+            </button>
+          </form>
+        </div>
       </main>
     </div>
   )
