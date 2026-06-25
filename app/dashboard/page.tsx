@@ -60,7 +60,9 @@ export default function Dashboard() {
         const { data: td } = await supabase.from('tasks').select('*').eq('student_id', s.id).order('deadline', { ascending: true })
         setTasks(td || [])
       } else {
-        setStudent({ id: '', name: user.email?.split('@')[0] || 'there' })
+        // Logged in but no profile — send to register Step 2
+        window.location.href = '/register'
+        return
       }
       setLoading(false); return
     }

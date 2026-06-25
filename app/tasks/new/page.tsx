@@ -45,7 +45,14 @@ export default function NewTask() {
       if (!user) { router.push('/login'); return }
       supabase.from('students').select('id,name,phone').eq('user_id', user.id).single()
         .then(({ data }) => {
-          if (data) { setStudentId(data.id); setStudentName(data.name); setForm(f => ({ ...f, phone: data.phone || '' })) }
+          if (data) {
+            setStudentId(data.id)
+            setStudentName(data.name)
+            setForm(f => ({ ...f, phone: data.phone || '' }))
+          } else {
+            // No student profile — must complete registration first
+            window.location.href = '/register'
+          }
         })
     })
   }, [router])
