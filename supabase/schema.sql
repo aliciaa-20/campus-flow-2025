@@ -8,6 +8,7 @@ create table if not exists students (
   name text not null,
   branch text,
   year int,
+  subjects text,
   phone text,
   created_at timestamptz default now()
 );
