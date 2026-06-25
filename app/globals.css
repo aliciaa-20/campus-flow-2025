@@ -1,76 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-@layer base {
-  :root {
-    --background: 220 20% 97%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 250 84% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 92%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 250 84% 96%;
-    --accent-foreground: 250 84% 30%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 14% 90%;
-    --input: 220 14% 90%;
-    --ring: 250 84% 60%;
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    --background: 225 25% 8%;
-    --foreground: 210 40% 96%;
-    --card: 225 25% 11%;
-    --card-foreground: 210 40% 96%;
-    --primary: 250 84% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 225 25% 16%;
-    --secondary-foreground: 210 40% 96%;
-    --muted: 225 25% 15%;
-    --muted-foreground: 215 20% 60%;
-    --accent: 250 40% 18%;
-    --accent-foreground: 250 84% 80%;
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 225 25% 18%;
-    --input: 225 25% 18%;
-    --ring: 250 84% 65%;
-  }
+/* ─── Design Tokens ────────────────────────────────────────────── */
+:root {
+  --bg:         #09090B;
+  --surface:    #111217;
+  --card:       #151821;
+  --border:     rgba(255, 255, 255, 0.08);
+  --border-mid: rgba(255, 255, 255, 0.12);
+  --accent:     #7C5CFF;
+  --accent-muted: rgba(124, 92, 255, 0.15);
+  --success:    #18C964;
+  --warning:    #FFB224;
+  --danger:     #FF5A5F;
+  --text-1:     rgba(255, 255, 255, 0.95);
+  --text-2:     rgba(255, 255, 255, 0.60);
+  --text-3:     rgba(255, 255, 255, 0.35);
+  --radius-card: 16px;
+  --radius-btn:  10px;
+  --radius-sm:   8px;
 }
 
+/* ─── Base ─────────────────────────────────────────────────────── */
 @layer base {
-  * { @apply border-border; }
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+
   body {
-    @apply bg-background text-foreground;
+    background: var(--bg);
+    color: var(--text-1);
     font-family: 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Override shadcn/tailwind variables to match our palette */
+  :root {
+    --background:         9 9% 4%;
+    --foreground:         0 0% 95%;
+    --card:               220 20% 10%;
+    --card-foreground:    0 0% 95%;
+    --primary:            256 100% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary:          220 15% 14%;
+    --secondary-foreground: 0 0% 80%;
+    --muted:              220 15% 13%;
+    --muted-foreground:   0 0% 45%;
+    --accent:             220 15% 14%;
+    --accent-foreground:  0 0% 95%;
+    --destructive:        0 80% 65%;
+    --destructive-foreground: 0 0% 100%;
+    --border:             220 13% 16%;
+    --input:              220 13% 16%;
+    --ring:               256 100% 66%;
+    --radius:             0.75rem;
   }
 }
 
-/* ── Flip card styles ──────────────────────────────── */
-.flip-card {
-  perspective: 1000px;
-  cursor: pointer;
+/* ─── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* ─── Layout utilities ──────────────────────────────────────────── */
+.cf-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
 }
+
+.cf-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.cf-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-btn);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.12s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cf-btn-primary:hover  { opacity: 0.88; transform: translateY(-1px); }
+.cf-btn-primary:active { transform: translateY(0); opacity: 1; }
+.cf-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.cf-btn-secondary {
+  background: transparent;
+  color: var(--text-2);
+  border-radius: var(--radius-btn);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cf-btn-secondary:hover { background: rgba(255,255,255,0.05); color: var(--text-1); border-color: var(--border-mid); transform: translateY(-1px); }
+
+.cf-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  padding: 9px 13px;
+  font-size: 13.5px;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cf-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12);
+}
+.cf-input::placeholder { color: var(--text-3); }
+
+.cf-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ─── Badge ─────────────────────────────────────────────────────── */
+.cf-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.cf-badge-accent   { background: var(--accent-muted); color: var(--accent); }
+.cf-badge-success  { background: rgba(24,201,100,0.12); color: var(--success); }
+.cf-badge-warning  { background: rgba(255,178,36,0.12); color: var(--warning); }
+.cf-badge-danger   { background: rgba(255,90,95,0.12); color: var(--danger); }
+.cf-badge-muted    { background: rgba(255,255,255,0.06); color: var(--text-2); }
+
+/* ─── Page animations ───────────────────────────────────────────── */
+.page-enter {
+  animation: pageEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Skeleton loading ──────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ─── Flip card ─────────────────────────────────────────────────── */
+.flip-card { perspective: 1000px; cursor: pointer; }
 .flip-card-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
 }
-.flip-card-inner.flipped {
-  transform: rotateY(180deg);
-}
+.flip-card-inner.flipped { transform: rotateY(180deg); }
 .flip-card-front,
 .flip-card-back {
   position: absolute;
@@ -78,45 +199,29 @@
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
+  padding: 1.5rem;
 }
-.flip-card-back {
-  transform: rotateY(180deg);
+.flip-card-back { transform: rotateY(180deg); }
+
+/* ─── Progress bar ──────────────────────────────────────────────── */
+.cf-progress-track {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.cf-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Gradient glow button ──────────────────────────── */
-.btn-glow {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, #a855f7 100%);
-  box-shadow: 0 4px 20px hsl(var(--primary) / 0.35);
-  transition: box-shadow 0.2s, transform 0.15s;
+/* ─── Divider ───────────────────────────────────────────────────── */
+.cf-divider {
+  height: 1px;
+  background: var(--border);
 }
-.btn-glow:hover {
-  box-shadow: 0 6px 28px hsl(var(--primary) / 0.55);
-  transform: translateY(-1px);
-}
-
-/* ── Glass card ────────────────────────────────────── */
-.glass {
-  backdrop-filter: blur(12px) saturate(1.4);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
-  background: hsl(var(--card) / 0.75);
-  border: 1px solid hsl(var(--border) / 0.6);
-}
-
-/* ── Smooth page fade ──────────────────────────────── */
-main {
-  animation: fadeUp 0.35s ease both;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Scrollbar ─────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 99px; }
