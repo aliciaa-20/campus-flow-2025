@@ -133,7 +133,7 @@ export default function NewTask() {
           <button className="cf-btn-secondary" onClick={() => { setResult(null); setForm(f => ({ ...f, title: '', subject: '', description: '', deadline: '' })) }} style={{ flex: 1, justifyContent: 'center', fontSize: 13 }}>
             Add Another
           </button>
-          <button className="cf-btn-primary" onClick={() => router.push('/dashboard')} style={{ flex: 1, justifyContent: 'center', fontSize: 13 }}>
+          <button className="cf-btn-primary" onClick={() => { window.location.href = '/dashboard' }} style={{ flex: 1, justifyContent: 'center', fontSize: 13 }}>
             Go to Dashboard
           </button>
         </div>
