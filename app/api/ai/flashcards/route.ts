@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3-70b-versatile',
+      model: 'llama3-70b-8192',
       messages: [{
         role: 'user',
         content: `You are a study assistant. Given these lecture notes, return ONLY a JSON array of 5 flashcards. No preamble, no markdown fences, just raw JSON.
@@ -23,8 +23,6 @@ Notes: ${notes}`,
     })
 
     const raw = completion.choices[0]?.message?.content || '[]'
-
-    // Strip markdown fences if model adds them
     const cleaned = raw.replace(/```json|```/g, '').trim()
     const flashcards = JSON.parse(cleaned)
 

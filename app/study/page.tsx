@@ -100,14 +100,17 @@ export default function StudyPage() {
           </div>
         )}
 
-        {/* Flashcards grid */}
+        {/* Flashcards grid — FIX: flipped class goes on outer .flip-card div */}
         {tab === 'flash' && flashcards.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {flashcards.map((card, i) => (
-              <div key={i} className="flip-card h-40 cursor-pointer" style={{ height: '160px' }}
+              <div
+                key={i}
+                className={`flip-card cursor-pointer ${flipped[i] ? 'flipped' : ''}`}
+                style={{ height: '160px' }}
                 onClick={() => setFlipped(f => ({ ...f, [i]: !f[i] }))}
               >
-                <div className={`flip-card-inner ${flipped[i] ? 'flipped' : ''}`}>
+                <div className="flip-card-inner">
                   <div className="flip-card-front bg-card border rounded-xl flex items-center justify-center p-4">
                     <p className="text-sm font-medium text-center">{card.question}</p>
                   </div>
