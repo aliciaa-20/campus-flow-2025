@@ -7,19 +7,36 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 export async function POST(req: NextRequest) {
   try {
     const { notes } = await req.json()
+
     if (!notes?.trim()) {
-      return NextResponse.json({ error: 'Notes are required' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Notes are required' },
+        { status: 400 }
+      )
     }
 
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
-      messages: [{
-        role: 'user',
-        content: `You are a study assistant. Given these lecture notes, return ONLY a JSON array of 5 multiple choice questions. No preamble, no markdown fences, just raw JSON.
-Format: [{"question":"...","options":["A","B","C","D"],"correct":0}]
+      messages: [
+        {
+          role: 'user',
+          content: `You are a study assistant. Given these lecture notes, return ONLY a JSON array of 5 multiple choice questions. No preamble, no markdown fences, just raw JSON.
+
+Format:
+[
+  {
+    "question":"...",
+    "options":["A","B","C","D"],
+    "correct":0
+  }
+]
+
 "correct" is the 0-indexed position of the correct answer.
-Notes: ${notes}`,
-      }],
+
+Notes:
+${notes}`,
+        },
+      ],
       max_tokens: 1000,
     })
 
@@ -27,9 +44,35 @@ Notes: ${notes}`,
     const cleaned = raw.replace(/```json|```/g, '').trim()
     const mcqs = JSON.parse(cleaned)
 
+    // Notify n8n that the study pack is ready
+    try {
+      const webhook = process.env.N8N_STUDY_BUDDY_WEBHOOK
+
+      if (webhook) {
+        await fetch(webhook, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            subject: 'Study Buddy',
+            mcqCount: mcqs.length,
+          }),
+        })
+      }
+    } catch (err) {
+      console.error('Failed to notify n8n:', err)
+    }
+
     return NextResponse.json({ mcqs })
+
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Failed to generate MCQs'
-    return NextResponse.json({ error: message }, { status: 500 })
+    const message =
+      err instanceof Error ? err.message : 'Failed to generate MCQs'
+
+    return NextResponse.json(
+      { error: message },
+      { status: 500 }
+    )
   }
 }
